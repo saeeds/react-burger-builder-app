@@ -1,5 +1,5 @@
 import React from "react";
-import Auxiliary from "../../../hoc/Auxiliary";
+import Auxiliary from "../../../hoc/Auxiliary/Auxiliary.component";
 import Button from '../../UI/button/button.component'
 const orderSummery = props => {
   const ingredientSummery = Object.keys(props.ingredients).map(igKey => {
