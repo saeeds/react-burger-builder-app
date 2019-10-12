@@ -3,7 +3,8 @@ import styles from "./button.styles.css";
 const button = props => {
   return (
     <button
-      className={[styles.Button, styles[props.bntType]].join(' ')}
+      disabled={props.disabled}
+      className={[styles.Button, styles[props.bntType]].join(" ")}
       onClick={props.clicked}
     >
       {props.children}
