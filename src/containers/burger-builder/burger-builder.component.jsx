@@ -8,22 +8,23 @@ import OrderSummery from "../../components/burger/order-summery/order-summery.co
 import axios from "../../axios-orders";
 import Spinner from "../../components/UI/spinner/spinner.component";
 import withErrorHandler from "../../hoc/with-error-handler/with-error-handler.component";
-import * as burgerBuilderActions from "../../store/actions/index";
+import * as actions from "../../store/actions/index";
 
 const mapStateToProps = state => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice,
-    error: state.error
+    ings: state.burgerBuilde.ingredients,
+    price: state.burgerBuilde.totalPrice,
+    error: state.burgerBuilde.error,
+    purchased: state.order.purchased
   };
 };
+
 const mapDispatchToProps = dispatch => {
   return {
-    onIngredientAdded: ingName =>
-      dispatch(burgerBuilderActions.addIngredient(ingName)),
-    onIngredientRemoved: ingName =>
-      dispatch(burgerBuilderActions.removeIngredient(ingName)),
-    onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
+    onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
+    onIngredientRemoved: ingName => dispatch(actions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actions.initIngredients()),
+    onInitPurchase: () => dispatch(actions.purchaseInit())
   };
 };
 
@@ -40,7 +41,10 @@ class BurgerBuilder extends Component {
 
   purchaseCancelHandler = () => this.setState({ purchasing: false });
 
-  purchaseContinueHandler = () => this.props.history.push("/checkout");
+  purchaseContinueHandler = () => {
+    this.props.onInitPurchase();
+    this.props.history.push("/checkout");
+  };
 
   updatePurchaseState(ingredients) {
     const sum = Object.keys(ingredients)
