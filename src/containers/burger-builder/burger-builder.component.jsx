@@ -10,24 +10,6 @@ import Spinner from "../../components/UI/spinner/spinner.component";
 import withErrorHandler from "../../hoc/with-error-handler/with-error-handler.component";
 import * as actions from "../../store/actions/index";
 
-const mapStateToProps = state => {
-  return {
-    ings: state.burgerBuilde.ingredients,
-    price: state.burgerBuilde.totalPrice,
-    error: state.burgerBuilde.error,
-    purchased: state.order.purchased
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
-    onIngredientRemoved: ingName => dispatch(actions.removeIngredient(ingName)),
-    onInitIngredients: () => dispatch(actions.initIngredients()),
-    onInitPurchase: () => dispatch(actions.purchaseInit())
-  };
-};
-
 class BurgerBuilder extends Component {
   state = {
     purchasing: false
@@ -37,7 +19,14 @@ class BurgerBuilder extends Component {
     this.props.onInitIngredients();
   }
 
-  purchaseHandler = () => this.setState({ purchasing: true });
+  purchaseHandler = () => {
+    if (this.props.isAuthenticated) {
+      this.setState({ purchasing: true });
+    } else {
+      this.props.onSetAuthRedirectPath('/checkout')
+      this.props.history.push("/auth");
+    }
+  };
 
   purchaseCancelHandler = () => this.setState({ purchasing: false });
 
@@ -83,6 +72,7 @@ class BurgerBuilder extends Component {
             disabled={disableInfo}
             purchasable={this.updatePurchaseState(this.props.ings)}
             ordered={this.purchaseHandler}
+            isAuth={this.props.isAuthenticated}
             price={this.props.price}
           />
         </Auxiliary>
@@ -110,6 +100,25 @@ class BurgerBuilder extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    ings: state.burgerBuilde.ingredients,
+    price: state.burgerBuilde.totalPrice,
+    error: state.burgerBuilde.error,
+    isAuthenticated: state.auth.token !== null
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
+    onIngredientRemoved: ingName => dispatch(actions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actions.initIngredients()),
+    onInitPurchase: () => dispatch(actions.purchaseInit()),
+    onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
+  };
+};
 
 export default connect(
   mapStateToProps,
