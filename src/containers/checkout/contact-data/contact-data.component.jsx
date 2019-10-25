@@ -8,22 +8,6 @@ import { connect } from "react-redux";
 import WithErrorHandler from "../../../hoc/with-error-handler/with-error-handler.component";
 import * as actions from "../../../store/actions/index";
 
-const mapStateToProps = state => {
-  return {
-    ings: state.burgerBuilde.ingredients,
-    price: state.burgerBuilde.totalPrice,
-    loading: state.order.loading,
-    token: state.auth.token
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onOrderBurger: (orderData, token) =>
-      dispatch(actions.purchaseBurger(orderData, token))
-  };
-};
-
 class ContactData extends Component {
   state = {
     orderForm: {
@@ -125,7 +109,8 @@ class ContactData extends Component {
     const order = {
       ingredients: this.props.ings,
       price: this.props.price,
-      orderData: formData
+      orderData: formData,
+      userId: this.props.userId
     };
 
     this.props.onOrderBurger(order, this.props.token);
@@ -222,6 +207,23 @@ class ContactData extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    ings: state.burgerBuilde.ingredients,
+    price: state.burgerBuilde.totalPrice,
+    loading: state.order.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onOrderBurger: (orderData, token) =>
+      dispatch(actions.purchaseBurger(orderData, token))
+  };
+};
 
 export default connect(
   mapStateToProps,
